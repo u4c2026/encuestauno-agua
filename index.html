@@ -680,11 +680,9 @@ function processAudio(){
 async function submitSurvey(){
   clearIA();
   addUser('✅ Sí, enviar mis respuestas');
-  addBot('Enviando sus respuestas...');
 
   var fields={
     'Name'                                     : answers['nombre']||'',
-    'Household Representative Name'            : answers['nombre']||'',
     'Age'                                      : answers['age']||'',
     'Gender'                                   : answers['gender']||'',
     'Community'                                : answers['community']||'',
@@ -730,117 +728,25 @@ async function submitSurvey(){
     'Timestamp'                                : nowTS()
   };
 
-  if(audios['audio_water'])   fields['Water collection story']    += '\n[audio grabado]';
-  if(audios['audio_hygiene']) fields['Hygiene/water customs story']+= '\n[audio grabado]';
-  if(audios['audio_final'])   fields['Final message']             += '\n[audio grabado]';
-
-  // Remove empty fields
-  Object.keys(fields).forEach(function(k){if(!fields[k])delete fields[k];});
-
   // Save locally
   try{localStorage.setItem('agua_lb_'+Date.now(),JSON.stringify(fields));}catch(e){}
 
   // Build WhatsApp message
-  var wa=buildWA(fields);
-  // Send to WhatsApp group
-  var waText = encodeURIComponent(wa);
-  $('wa-btn').href = 'https://wa.me/5756029376?text=' + waText;
+  var wa = buildWA(fields);
+  var waUrl = 'https://wa.me/15756029376?text=' + encodeURIComponent(wa);
+  $('wa-btn').href = waUrl;
 
-  // Send to Google Form (100% reliable, no CORS issues)
-  var sent=false;
-  try{
-    // Build a readable text summary for the single form field
-    var summary = [
-      '=== ENCUESTA AGUA - LÍNEA BASE ===',
-      'Fecha/Hora: ' + (fields['Timestamp']||''),
-      '',
-      'DATOS PERSONALES',
-      'Nombre: '          + (fields['Name']||''),
-      'Edad: '            + (fields['Age']||''),
-      'Género: '          + (fields['Gender']||''),
-      'Comunidad: '       + (fields['Community']||''),
-      'N° familia: '      + (fields['Family Number']||''),
-      'Personas hogar: '  + (fields['Household Size']||''),
-      'Fecha encuesta: '  + (fields['Survey Date']||''),
-      'Encuestador: '     + (fields['Surveyor Name']||''),
-      'WhatsApp: '        + (fields['WhatsApp Number']||''),
-      '',
-      'FUENTES DE AGUA',
-      'Fuente: '          + (fields['Water sources']||''),
-      'Tiempo (h): '      + (fields['Time to collect water (hours)']||''),
-      'Tiempo (min): '    + (fields['Time to collect water (minutes)']||''),
-      'Quién busca: '     + (fields['Water collector']||''),
-      'Viajes/día: '      + (fields['Number of trips per day']||''),
-      'Recipientes: '     + (fields['Containers per trip']||''),
-      'Capacidad (L): '   + (fields['Container size (L)']||''),
-      'Historia: '        + (fields['Water collection story']||''),
-      '',
-      'CALIDAD DEL AGUA',
-      'Percepción: '      + (fields['Water quality perception']||''),
-      'Tratamiento: '     + (fields['Water treatment']||''),
-      'Otro método: '     + (fields['Other water treatment method']||''),
-      'Enfermedades(3m): '+ (fields['Family illness due to water (3 months)']||''),
-      'Quién enfermó: '   + (fields['Ill person(s)']||''),
-      'Frecuencia: '      + (fields['Illness frequency']||''),
-      '',
-      'ALMACENAMIENTO',
-      'Guarda agua en: '  + (fields['Water storage method']||''),
-      'Lava recipientes: '+ (fields['Cleans water containers']||''),
-      'Dificultad: '      + (fields['Water-related challenge story']||''),
-      '',
-      'HIGIENE',
-      'Lavado manos: '    + (fields['Hand washing frequency']||''),
-      'Jabón/ceniza: '    + (fields['Soap or ash available for hand washing']||''),
-      'Saneamiento: '     + (fields['Sanitation facility']||''),
-      'Desechos: '        + (fields['Waste disposal method']||''),
-      'Otro desecho: '    + (fields['Other waste disposal method']||''),
-      'Costumbres: '      + (fields['Hygiene/water customs story']||''),
-      '',
-      'IMPACTO',
-      'Impacto diario: '  + (fields['Impact of water collection on daily life']||''),
-      'Niños/escuela: '   + (fields['Children miss school for water']||''),
-      'Gasto semanal: Bs.'+ (fields['Weekly water expense']||''),
-      'Escasez: '         + (fields['Seasonal water scarcity']||''),
-      'Esperanzas: '      + (fields['Life with clean water - hopes & changes']||''),
-      '',
-      'PROYECTO',
-      'Conoce proyecto: ' + (fields['Knows about water project']||''),
-      'Participó: '       + (fields['Participated in project activities']||''),
-      'Participaría: '    + (fields['Willing to participate in water system care']||''),
-      'Aportes: '         + (fields['Concerns or requests for project']||''),
-      'Mensaje: '         + (fields['Final message']||''),
-      'Voluntario: '      + (fields['Volunteer Name']||''),
-    ].join('\n');
-
-    var formData = new FormData();
-    formData.append(ENTRY_ID, summary);
-
-    await fetch(FORM_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: formData
-    });
-    sent = true;
-  } catch(e){ console.warn('Form error:',e); }
-
-  
-
-  var badge=$('sucBadge');
-  if(sent){
-    badge.textContent='✓ Datos enviados a Google Sheets';
-    badge.className='suc-badge badge-ok';
-    badge.style.cssText='background:#E8F5EE;color:#0F6E56;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:700;margin-top:14px;display:block';
-  } else {
-    badge.textContent='⚠️ Sin conexión — use el botón de WhatsApp para guardar sus respuestas';
-    badge.className='suc-badge badge-local';
-    badge.style.cssText='background:#FDF3DC;color:#BA7517;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;margin-top:14px;display:block';
-  }
+  // Show success immediately — no waiting for network
   $('successScreen').classList.add('on');
-  // Auto-open WhatsApp after 1 second
-  setTimeout(function(){
-    var btn = $('wa-btn');
-    if(btn && btn.href && btn.href !== '#') btn.click();
-  }, 1200);
+
+  // Try sending to sheet silently in background (don't block or wait)
+  try{
+    var img = new Image();
+    var params = Object.keys(fields).map(function(k){
+      return encodeURIComponent(k)+'='+encodeURIComponent(fields[k]||'');
+    }).join('&');
+    img.src = SHEET_URL + '?' + params;
+  }catch(e){}
 }
 
 // ── WHATSAPP ─────────────────────────────────────────
