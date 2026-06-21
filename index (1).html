@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#185FA5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>💧 Agua Potable — Línea Base GG#2681765</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Nunito',sans-serif;background:#EEF0EC;color:#1A1F18}
+.app{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;background:#fff}
+
+/* HEADER */
+.hdr{background:#185FA5;padding:11px 14px;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.hdr-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.hdr-txt{flex:1;min-width:0}
+.hdr-txt h1{font-size:12.5px;font-weight:800;color:#fff;line-height:1.2}
+.hdr-txt p{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+.hdr-badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,.2);color:#fff;flex-shrink:0}
+.hdr-qr{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.15);border:none;cursor:pointer;font-size:15px;flex-shrink:0;color:#fff}
+
+/* PROGRESS */
+.prog{padding:6px 14px 0;background:#fff;flex-shrink:0}
+.prog-row{display:flex;justify-content:space-between;font-size:10px;color:#8A9188;font-weight:700;margin-bottom:4px}
+.prog-track{height:4px;background:#E2E5DF;border-radius:2px;overflow:hidden;margin-bottom:1px}
+.prog-fill{height:100%;background:#185FA5;border-radius:2px;transition:width .5s ease}
+.section-tag{font-size:10px;color:#185FA5;font-weight:800;text-align:center;padding:3px 0 4px;letter-spacing:.04em}
+
+/* MESSAGES */
+.msgs{flex:1;overflow-y:auto;padding:12px 12px 6px;display:flex;flex-direction:column;gap:9px;scroll-behavior:smooth}
+.msgs::-webkit-scrollbar{display:none}
+.row{display:flex;gap:7px;align-items:flex-end}
+.row.me{flex-direction:row-reverse}
+.av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-bottom:2px}
+.av-bot{background:#185FA5;color:#fff;font-size:14px}
+.av-me{background:#1A1F18;color:#fff;font-size:10px;font-weight:800}
+.bbl{max-width:84%;padding:9px 13px;font-size:14px;line-height:1.55;border-radius:15px;word-break:break-word}
+.bbl b{font-weight:800}
+.bbl em{font-size:12px;color:#8A9188;font-style:normal}
+.bbl-bot{background:#EEF0EC;color:#1A1F18;border-radius:4px 15px 15px 15px}
+.bbl-me{background:#185FA5;color:#fff;border-radius:15px 4px 15px 15px;font-weight:600}
+.typing-row{display:flex;gap:7px;align-items:flex-end}
+.typing-bbl{padding:10px 13px;background:#EEF0EC;border-radius:4px 15px 15px 15px;display:flex;gap:4px}
+.typing-bbl span{width:7px;height:7px;border-radius:50%;background:#8A9188;animation:blink 1.2s infinite}
+.typing-bbl span:nth-child(2){animation-delay:.2s}
+.typing-bbl span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.2}30%{opacity:1}}
+
+/* INTERACTION */
+.ia{flex-shrink:0}
+
+/* CHOICES */
+.choices{padding:5px 12px 9px;display:flex;flex-direction:column;gap:6px}
+.ch-btn{padding:11px 13px;border:1.5px solid #E2E5DF;border-radius:11px;background:#fff;font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:700;color:#1A1F18;cursor:pointer;text-align:left;display:flex;align-items:center;gap:9px;transition:all .12s;width:100%}
+.ch-btn:active{transform:scale(.97);background:#EAF3FB}
+.ch-btn:hover,.ch-btn:focus{border-color:#185FA5;background:#EAF3FB;color:#185FA5;outline:none}
+.ch-emoji{font-size:17px;flex-shrink:0;width:22px;text-align:center}
+
+/* PILLS */
+.pills{padding:5px 12px 9px;display:flex;flex-wrap:wrap;gap:6px}
+.pill-btn{padding:8px 14px;border:1.5px solid #E2E5DF;border-radius:30px;background:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:#4A5248;cursor:pointer;transition:all .12s}
+.pill-btn:active{transform:scale(.95)}
+.pill-btn:hover,.pill-btn:focus{border-color:#185FA5;background:#EAF3FB;color:#185FA5;outline:none}
+
+/* MULTI-SELECT */
+.multi-wrap{padding:5px 12px 9px}
+.multi-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.multi-item{display:flex;align-items:center;gap:10px;padding:10px 13px;border:1.5px solid #E2E5DF;border-radius:11px;cursor:pointer;transition:all .12s;background:#fff}
+.multi-item:active{transform:scale(.98)}
+.multi-item.selected{border-color:#185FA5;background:#EAF3FB}
+.multi-item input[type=checkbox]{width:18px;height:18px;accent-color:#185FA5;flex-shrink:0;cursor:pointer}
+.multi-label{font-size:13.5px;font-weight:700;color:#1A1F18;flex:1}
+.multi-item.selected .multi-label{color:#185FA5}
+.multi-emoji{font-size:17px;flex-shrink:0;width:22px;text-align:center}
+.multi-done{width:100%;padding:12px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer}
+.multi-done:active{opacity:.85}
+
+/* SCALE */
+.scale-wrap{padding:5px 12px 9px}
+.scale-btns{display:flex;gap:5px}
+.sc-btn{flex:1;padding:9px 2px;border:1.5px solid #E2E5DF;border-radius:9px;background:#fff;font-family:'Nunito',sans-serif;cursor:pointer;text-align:center;transition:all .12s}
+.sc-btn:active{transform:scale(.93)}
+.sc-btn:hover,.sc-btn:focus{border-color:#185FA5;background:#EAF3FB;outline:none}
+.sc-face{font-size:19px;display:block;margin-bottom:2px}
+.sc-num{font-size:11px;font-weight:800;color:#8A9188}
+.scale-labs{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:#8A9188;font-weight:700;padding:0 2px}
+
+/* TEXT */
+.txt-wrap{padding:5px 12px 9px}
+.txt-area{width:100%;padding:11px 13px;border:1.5px solid #E2E5DF;border-radius:11px;font-family:'Nunito',sans-serif;font-size:14px;color:#1A1F18;background:#EEF0EC;resize:none;min-height:72px;outline:none;transition:border-color .15s;display:block}
+.txt-area:focus{border-color:#185FA5;background:#fff}
+.txt-area::placeholder{color:#8A9188}
+.txt-single{width:100%;padding:12px 13px;border:1.5px solid #E2E5DF;border-radius:11px;font-family:'Nunito',sans-serif;font-size:14px;color:#1A1F18;background:#EEF0EC;outline:none;transition:border-color .15s;display:block;margin-bottom:8px}
+.txt-single:focus{border-color:#185FA5;background:#fff}
+.txt-single::placeholder{color:#8A9188}
+.txt-btns{display:flex;gap:8px;margin-top:8px}
+.skip-btn{padding:11px 13px;border:1.5px solid #E2E5DF;border-radius:10px;background:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:#4A5248;cursor:pointer}
+.send-btn{flex:1;padding:12px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer}
+.send-btn:active{opacity:.85}
+
+/* NUMBER */
+.num-wrap{padding:5px 12px 9px;display:flex;gap:8px;align-items:center}
+.num-ctrl{width:46px;height:46px;border-radius:10px;border:1.5px solid #E2E5DF;background:#fff;font-size:24px;font-weight:700;color:#4A5248;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
+.num-ctrl:active{background:#EEF0EC}
+.num-val{flex:1;padding:11px;border:1.5px solid #E2E5DF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:22px;font-weight:800;text-align:center;color:#1A1F18;background:#EEF0EC;outline:none}
+.num-val:focus{border-color:#185FA5;background:#fff}
+.num-ok{padding:11px 17px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0}
+
+/* DATE */
+.date-wrap{padding:5px 12px 9px}
+.date-inp{width:100%;padding:13px 13px;border:1.5px solid #E2E5DF;border-radius:11px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:#1A1F18;background:#EEF0EC;outline:none;margin-bottom:8px;display:block}
+.date-inp:focus{border-color:#185FA5;background:#fff}
+.date-btns{display:flex;gap:8px}
+.date-today{flex:1;padding:12px;background:#EAF3FB;color:#185FA5;border:1.5px solid #185FA5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer}
+.date-ok{flex:1;padding:12px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer}
+
+/* AUDIO */
+.audio-wrap{padding:5px 12px 9px}
+.audio-box{background:#EEF0EC;border:1.5px solid #E2E5DF;border-radius:12px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.audio-status{font-size:12px;color:#8A9188;font-weight:700;text-align:center}
+.audio-ctrl{display:flex;align-items:center;gap:13px}
+.rec-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;font-size:23px;display:flex;align-items:center;justify-content:center;transition:transform .1s}
+.rec-btn:active{transform:scale(.93)}
+.rec-idle{background:#C0392B}.rec-on{background:#C0392B;animation:pulse 1s infinite}.rec-done{background:#0F6E56}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.5)}70%{box-shadow:0 0 0 12px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+.stop-btn{width:42px;height:42px;border-radius:9px;border:1.5px solid #E2E5DF;background:#fff;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.rec-timer{font-size:21px;font-weight:800;color:#1A1F18;min-width:50px;text-align:center;font-variant-numeric:tabular-nums}
+.rec-timer.on{color:#C0392B}
+.audio-player{width:100%;border-radius:9px;outline:none}
+.audio-hint{font-size:11px;color:#8A9188;text-align:center}
+.audio-skip{padding:9px 17px;border:1.5px solid #E2E5DF;border-radius:9px;background:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:#4A5248;cursor:pointer}
+
+/* QR */
+.qr-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;align-items:center;justify-content:center;padding:20px}
+.qr-bg.on{display:flex}
+.qr-modal{background:#fff;border-radius:18px;padding:22px 18px;text-align:center;max-width:285px;width:100%}
+.qr-modal h3{font-size:15px;font-weight:800;color:#185FA5;margin-bottom:4px}
+.qr-modal p{font-size:12px;color:#8A9188;margin-bottom:13px;line-height:1.5}
+.qr-share{display:flex;gap:8px;margin-bottom:13px}
+.qr-share button{flex:1;padding:10px;border:1.5px solid #E2E5DF;border-radius:9px;background:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:#4A5248}
+#qr-render{display:flex;justify-content:center;margin-bottom:13px}
+.qr-close{width:100%;padding:12px;background:#185FA5;color:#fff;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer}
+
+/* SUCCESS */
+.success{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;padding:32px 20px;text-align:center;background:#fff;position:fixed;inset:0;z-index:500;overflow-y:auto}
+.success.on{display:flex}
+.suc-ico{font-size:52px;margin-bottom:14px}
+.success h2{font-size:21px;font-weight:800;color:#185FA5;margin-bottom:9px}
+.success p{font-size:14px;color:#4A5248;line-height:1.6;max-width:280px}
+.suc-note{font-size:11px;color:#8A9188;margin-top:6px}
+.suc-badge{margin-top:13px;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700}
+.badge-ok{background:#E8F5EE;color:#0F6E56}
+.badge-local{background:#FDF3DC;color:#BA7517}
+.restart-btn{margin-top:20px;padding:13px 28px;background:#185FA5;color:#fff;border:none;border-radius:11px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer}
+</style>
+
+/* Hide host-html branding */
+iframe[src*="host-html"],
+a[href*="host-html"],
+div[class*="powered"],
+div[class*="branding"],
+div[id*="branding"],
+div[id*="powered"],
+[data-host-html],
+.host-html-badge,
+#host-html-badge { display:none !important; height:0 !important; }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="hdr">
+    <div class="hdr-av">💧</div>
+    <div class="hdr-txt">
+      <h1>Acceso al Agua — Línea Base</h1>
+      <p>GG#2681765 · Chijchi Baja &amp; Collpa Belén</p>
+    </div>
+    <span class="hdr-badge">Línea Base</span>
+    <button class="hdr-qr" onclick="openQR()" title="Compartir">📲</button>
+  </div>
+  <div class="prog">
+    <div class="prog-row">
+      <span id="stepLabel">Inicio</span>
+      <span id="pctLabel">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="section-tag" id="sectionTag"></div>
+  </div>
+  <div class="msgs" id="msgs"></div>
+  <div class="ia" id="ia"></div>
+</div>
+
+<div class="qr-bg" id="qrBg" onclick="if(event.target===this)closeQR()">
+  <div class="qr-modal">
+    <h3>Compartir esta encuesta</h3>
+    <p>Escanee el QR o comparta por WhatsApp</p>
+    <div class="qr-share">
+      <button onclick="shareWA()">💬 WhatsApp</button>
+      <button onclick="copyLink()">🔗 Copiar link</button>
+    </div>
+    <div id="qr-render"></div>
+    <button class="qr-close" onclick="closeQR()">Cerrar</button>
+  </div>
+</div>
+
+<div class="success" id="successScreen">
+  <div class="suc-ico">💧</div>
+  <h2>¡Encuesta completa!</h2>
+  <p>Gracias por participar. Sus respuestas se envían automáticamente. También puede compartirlas por WhatsApp.</p>
+  <p class="suc-note">GG#2681765 · Línea Base · Rotary · U4C · QBL</p>
+  <div class="suc-badge" id="sucBadge">Enviando...</div>
+
+  <a id="wa-btn" href="#" target="_blank"
+    style="display:flex;align-items:center;justify-content:center;gap:10px;
+           width:100%;max-width:300px;margin-top:20px;padding:15px 20px;
+           background:#25D366;color:#fff;border-radius:12px;
+           font-family:Nunito,sans-serif;font-size:16px;font-weight:800;
+           text-decoration:none">
+    <span style="font-size:22px">💬</span> Enviar por WhatsApp
+  </a>
+
+  <button id="copy-btn"
+    style="width:100%;max-width:300px;margin-top:10px;padding:13px;
+           background:#fff;color:#185FA5;border:2px solid #185FA5;border-radius:12px;
+           font-family:Nunito,sans-serif;font-size:15px;font-weight:800;cursor:pointer">
+    📋 Copiar respuestas
+  </button>
+
+  <button onclick="doRestart()"
+    style="width:100%;max-width:300px;margin-top:10px;padding:12px;
+           background:#EEF0EC;color:#4A5248;border:none;border-radius:12px;
+           font-family:Nunito,sans-serif;font-size:14px;font-weight:700;cursor:pointer">
+    🔄 Llenar de nuevo
+  </button>
+</div>
+
+<script>
+// ── CREDENTIALS ──────────────────────────────────────
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxo-R8d7MTshNCWIBDD-Kyq7Viw7nBskX22TN_E6YYJV_Qk-w3bj2-AOfQNMrU3T9l3/exec';
+
+
+
+
+// ── HELPERS ──────────────────────────────────────────
+function $(id){ return document.getElementById(id); }
+function scrollDown(){ requestAnimationFrame(function(){ var m=$('msgs'); m.scrollTop=m.scrollHeight; }); }
+function fmtDate(d){ return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'/'+d.getFullYear(); }
+function fmtTime(d){ return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function inputToDate(v){ if(!v) return ''; var p=v.split('-'); return p.length===3?p[1]+'/'+p[2]+'/'+p[0]:v; }
+function nowTS(){ var d=new Date(); return fmtDate(d)+' '+fmtTime(d); }
+
+// ── STATE ────────────────────────────────────────────
+var answers={}, qIdx=0, audioB64=null, audios={}, currentAudioField=null;
+var mediaRec=null, recChunks=[], recSecs=0, recTmr=null, qrGenerated=false;
+
+// ── QUESTIONS ────────────────────────────────────────
+var Q=[
+  {id:'bienvenida',type:'welcome',section:'',
+    msg:'¡Hola! 👋 Le voy a hacer algunas preguntas sobre el <b>acceso al agua</b> en su hogar.<br><br>Esto es parte de la encuesta de <b>Línea Base</b> del proyecto de agua potable GG#2681765.<br><br>Sus respuestas son <b>completamente confidenciales</b>.<br><br>¿Está listo/a?',
+    opts:[{e:'✅',t:'Sí, comenzar'},{e:'⏳',t:'En un momento'}]},
+
+  {id:'nombre',type:'text',section:'Sección 1 — Datos personales',label:'Nombre',
+    msg:'¿Cuál es el <b>nombre completo</b> del representante del hogar?',ph:'Nombre y apellido...',req:true},
+
+  {id:'age',type:'number',section:'Sección 1 — Datos personales',label:'Edad',
+    msg:'¿Cuántos años tiene?',min:1,max:110,def:35},
+
+  {id:'gender',type:'choices',section:'Sección 1 — Datos personales',label:'Género',
+    msg:'¿Cuál es su género?',
+    opts:[{e:'👩',t:'Mujer'},{e:'👨',t:'Hombre'},{e:'⚧️',t:'Otro'}]},
+
+  {id:'community',type:'choices',section:'Sección 1 — Datos personales',label:'Comunidad',
+    msg:'¿De qué <b>comunidad</b> es usted?',
+    opts:[{e:'🏔️',t:'Chijchi Baja (Romerhuma)'},{e:'🌿',t:'Collpa Belén'}]},
+
+  {id:'family_number',type:'text',section:'Sección 1 — Datos personales',label:'N° de familia',
+    msg:'¿Cuál es su <b>número de familia</b> en la lista de beneficiarios? (opcional)',ph:'Ej: 12',req:false,skip:true},
+
+  {id:'household_size',type:'number',section:'Sección 1 — Datos personales',label:'Personas en el hogar',
+    msg:'¿Cuántas <b>personas viven</b> en su hogar?',min:1,max:30,def:5},
+
+  {id:'survey_date',type:'date',section:'Sección 1 — Datos personales',label:'Fecha',
+    msg:'¿Cuál es la <b>fecha de hoy</b>?'},
+
+  {id:'surveyor_name',type:'text',section:'Sección 1 — Datos personales',label:'Encuestador/a',
+    msg:'¿Cuál es el nombre del <b>encuestador/a</b>? (opcional)',ph:'Nombre de quien aplica...',req:false,skip:true},
+
+  {id:'whatsapp',type:'text',section:'Sección 1 — Datos personales',label:'WhatsApp',
+    msg:'¿Tiene número de <b>WhatsApp</b>? (opcional)',ph:'+591 7XXXXXXX',req:false,skip:true},
+
+  {id:'water_sources',type:'multi',section:'Sección 2 — Fuentes de agua',label:'¿De dónde obtiene agua?',
+    msg:'¿De dónde obtiene su familia el agua para <b>beber y cocinar</b>?<br><em>Puede seleccionar varias opciones</em>',
+    opts:[{e:'🚰',t:'Tubería o grifo comunal'},{e:'🏞️',t:'Río o arroyo'},{e:'🌧️',t:'Agua de lluvia'},{e:'⛏️',t:'Pozo sin protección'},{e:'🧴',t:'Agua comprada'},{e:'🤝',t:'Vecino o familiar'},{e:'🪣',t:'Otro'}]},
+
+  {id:'time_hours',type:'number',section:'Sección 2 — Fuentes de agua',label:'Tiempo: horas',
+    msg:'¿Cuántas <b>horas</b> tarda en buscar agua (ida y vuelta)?',min:0,max:12,def:0},
+
+  {id:'time_minutes',type:'number',section:'Sección 2 — Fuentes de agua',label:'Tiempo: minutos',
+    msg:'¿Y cuántos <b>minutos</b> adicionales?',min:0,max:59,def:30},
+
+  {id:'water_collector',type:'choices',section:'Sección 2 — Fuentes de agua',label:'¿Quién busca el agua?',
+    msg:'¿Quién <b>va a buscar</b> el agua normalmente?',
+    opts:[{e:'👩',t:'Mamá / mujer adulta'},{e:'👨',t:'Papá / hombre adulto'},{e:'👧',t:'Niña'},{e:'👦',t:'Niño'},{e:'👴',t:'Adulto mayor'},{e:'👨‍👩‍👧',t:'Toda la familia'}]},
+
+  {id:'trips_per_day',type:'number',section:'Sección 2 — Fuentes de agua',label:'Viajes por día',
+    msg:'¿Cuántos <b>viajes por día</b> hacen para buscar agua?',min:0,max:20,def:2},
+
+  {id:'containers_per_trip',type:'number',section:'Sección 2 — Fuentes de agua',label:'Recipientes por viaje',
+    msg:'¿Cuántos <b>recipientes</b> llevan por viaje?',min:1,max:20,def:2},
+
+  {id:'container_size',type:'number',section:'Sección 2 — Fuentes de agua',label:'Capacidad (litros)',
+    msg:'¿Cuántos <b>litros</b> tiene cada recipiente aproximadamente?',min:1,max:200,def:20},
+
+  {id:'water_collection_story',type:'textarea',section:'Sección 2 — Fuentes de agua',label:'Historia de recolección',
+    msg:'En sus palabras, ¿cómo es un día <b>buscando agua</b> para su familia?<br><em>Opcional</em>',
+    ph:'Cuéntenos...',req:false,skip:true},
+
+  {id:'audio_water',type:'audio',section:'Sección 2 — Fuentes de agua',label:'Audio — agua',
+    msg:'¿Le gustaría <b>grabar un audio</b> sobre cómo obtiene el agua?<br><em>Opcional · máx. 2 min</em>'},
+
+  {id:'water_quality',type:'choices',section:'Sección 3 — Calidad del agua',label:'Calidad del agua',
+    msg:'¿Cómo considera el <b>agua que usa actualmente</b>?',
+    opts:[{e:'✨',t:'Limpia y segura'},{e:'🤔',t:'Más o menos limpia'},{e:'⚠️',t:'Sucia o contaminada'},{e:'❓',t:'No sé si es segura'}]},
+
+  {id:'water_treatment',type:'choices',section:'Sección 3 — Calidad del agua',label:'Tratamiento del agua',
+    msg:'¿<b>Trata el agua</b> antes de beberla?',
+    opts:[{e:'🔥',t:'La hiervo'},{e:'🧪',t:'Uso cloro o pastillas'},{e:'🫙',t:'La filtro'},{e:'☀️',t:'La pongo al sol'},{e:'❌',t:'No la trato'},{e:'🔧',t:'Otro método'}]},
+
+  {id:'other_treatment',type:'text',section:'Sección 3 — Calidad del agua',label:'Otro tratamiento',
+    msg:'¿Qué <b>otro método</b> usa?',ph:'Describa...',req:false,skip:true,
+    showIf:function(){return answers['water_treatment']==='🔧 Otro método';}},
+
+  {id:'family_illness',type:'pills',section:'Sección 3 — Calidad del agua',label:'Enfermedad por agua',
+    msg:'En los <b>últimos 3 meses</b>, ¿alguien se enfermó por el agua?',
+    opts:[{e:'😷',t:'Sí'},{e:'✅',t:'No'},{e:'🤷',t:'No sé'}]},
+
+  {id:'ill_person',type:'choices',section:'Sección 3 — Calidad del agua',label:'¿Quién se enfermó?',
+    msg:'¿Quién <b>se enfermó</b>?',
+    opts:[{e:'👶',t:'Niño/a menor de 5 años'},{e:'🧒',t:'Niño/a de 5 a 12 años'},{e:'🧑',t:'Joven o adulto'},{e:'👴',t:'Adulto mayor'},{e:'👨‍👩‍👧',t:'Varias personas'}],
+    showIf:function(){return answers['family_illness']==='😷 Sí';}},
+
+  {id:'illness_frequency',type:'number',section:'Sección 3 — Calidad del agua',label:'¿Cuántas veces?',
+    msg:'¿Cuántas <b>veces</b> se enfermaron en los últimos 3 meses?',min:1,max:50,def:1,
+    showIf:function(){return answers['family_illness']==='😷 Sí';}},
+
+  {id:'water_storage',type:'choices',section:'Sección 4 — Almacenamiento',label:'¿Cómo guarda el agua?',
+    msg:'¿Cómo <b>guarda el agua</b> en su hogar?',
+    opts:[{e:'🪣',t:'Baldes o cubos'},{e:'🫙',t:'Tinajas o cántaros'},{e:'🛢️',t:'Bidones'},{e:'🚰',t:'Tanque con tapa'},{e:'❌',t:'No guarda agua'}]},
+
+  {id:'cleans_containers',type:'pills',section:'Sección 4 — Almacenamiento',label:'¿Lava recipientes?',
+    msg:'¿Con qué frecuencia <b>lava los recipientes</b> de agua?',
+    opts:[{e:'✅',t:'Siempre'},{e:'⚖️',t:'A veces'},{e:'❌',t:'Casi nunca'}]},
+
+  {id:'water_challenge_story',type:'textarea',section:'Sección 4 — Almacenamiento',label:'Historia de dificultad',
+    msg:'¿Alguna <b>dificultad</b> que haya tenido con el agua?<br><em>Opcional</em>',
+    ph:'Cuéntenos...',req:false,skip:true},
+
+  {id:'handwashing_freq',type:'choices',section:'Sección 5 — Higiene',label:'Lavado de manos',
+    msg:'¿Con qué frecuencia se <b>lavan las manos</b>?',
+    opts:[{e:'✅',t:'Siempre — en momentos clave'},{e:'👍',t:'Frecuentemente'},{e:'⚖️',t:'A veces'},{e:'😕',t:'Pocas veces'}]},
+
+  {id:'soap_available',type:'pills',section:'Sección 5 — Higiene',label:'¿Hay jabón?',
+    msg:'¿Tienen <b>agua y jabón</b> (o ceniza) disponibles?',
+    opts:[{e:'✅',t:'Sí, siempre'},{e:'⚖️',t:'A veces'},{e:'❌',t:'No tenemos'}]},
+
+  {id:'sanitation',type:'choices',section:'Sección 5 — Higiene',label:'Letrina o baño',
+    msg:'¿Cuenta con <b>letrina, baño o sanitario</b>?',
+    opts:[{e:'🚽',t:'Sí, baño con inodoro'},{e:'🏚️',t:'Sí, letrina'},{e:'🔨',t:'En construcción'},{e:'❌',t:'No tenemos'}]},
+
+  {id:'waste_disposal',type:'choices',section:'Sección 5 — Higiene',label:'Eliminación de desechos',
+    msg:'¿Cómo <b>eliminan los desechos</b> en su hogar?',
+    opts:[{e:'🚛',t:'Recogida municipal'},{e:'🔥',t:'Quemamos la basura'},{e:'⛏️',t:'Enterramos'},{e:'🏞️',t:'Tiramos al campo o río'},{e:'🔧',t:'Otro método'}]},
+
+  {id:'other_waste',type:'text',section:'Sección 5 — Higiene',label:'Otro método',
+    msg:'¿Qué <b>otro método</b> usan?',ph:'Describa...',req:false,skip:true,
+    showIf:function(){return answers['waste_disposal']==='🔧 Otro método';}},
+
+  {id:'hygiene_story',type:'textarea',section:'Sección 5 — Higiene',label:'Costumbres de higiene',
+    msg:'¿Costumbres o tradiciones de higiene en su familia?<br><em>Opcional</em>',
+    ph:'Cuéntenos...',req:false,skip:true},
+
+  {id:'audio_hygiene',type:'audio',section:'Sección 5 — Higiene',label:'Audio — higiene',
+    msg:'¿Le gustaría <b>grabar un audio</b> sobre sus costumbres de higiene?<br><em>Opcional · máx. 2 min</em>'},
+
+  {id:'impact_daily_life',type:'choices',section:'Sección 6 — Impacto',label:'Impacto en vida diaria',
+    msg:'¿El tiempo para buscar agua <b>afecta</b> las actividades diarias?',
+    opts:[{e:'😓',t:'Sí, afecta mucho'},{e:'⚖️',t:'Sí, afecta algo'},{e:'👍',t:'Casi no afecta'},{e:'✅',t:'No afecta nada'}]},
+
+  {id:'children_miss_school',type:'pills',section:'Sección 6 — Impacto',label:'Niños y escuela',
+    msg:'¿Los <b>niños dejan la escuela</b> para ir a buscar agua?',
+    opts:[{e:'😔',t:'Sí'},{e:'✅',t:'No'},{e:'🚫',t:'No hay niños'}]},
+
+  {id:'weekly_expense',type:'number',section:'Sección 6 — Impacto',label:'Gasto semanal (Bs.)',
+    msg:'¿Cuánto <b>gasta por semana</b> en agua? (Bolivianos · 0 si no paga)',min:0,max:500,def:0},
+
+  {id:'seasonal_scarcity',type:'choices',section:'Sección 6 — Impacto',label:'Escasez estacional',
+    msg:'¿Cuándo es <b>más difícil</b> conseguir agua?',
+    opts:[{e:'☀️',t:'Temporada seca (may–oct)'},{e:'🌧️',t:'Temporada lluvia (nov–abr)'},{e:'📅',t:'Todo el año'},{e:'✅',t:'No hay problema'}]},
+
+  {id:'hopes_clean_water',type:'textarea',section:'Sección 6 — Impacto',label:'Esperanzas',
+    msg:'¿Qué <b>cambiaría en su vida</b> si tuviera agua limpia en casa?<br><em>Cuéntenos sus esperanzas</em>',
+    ph:'¿Qué sería diferente?...',req:false,skip:true},
+
+  {id:'knows_project',type:'pills',section:'Sección 7 — El proyecto',label:'¿Conoce el proyecto?',
+    msg:'¿Sabe usted sobre el <b>proyecto de agua potable</b> en su comunidad?',
+    opts:[{e:'✅',t:'Sí'},{e:'🤏',t:'He oído algo'},{e:'❌',t:'No sé nada'}]},
+
+  {id:'participated',type:'pills',section:'Sección 7 — El proyecto',label:'¿Ha participado?',
+    msg:'¿Ha <b>participado</b> en actividades del proyecto?',
+    opts:[{e:'✅',t:'Sí'},{e:'❌',t:'No'},{e:'🔜',t:'Quiero participar'}]},
+
+  {id:'willing_to_participate',type:'pills',section:'Sección 7 — El proyecto',label:'¿Participaría?',
+    msg:'¿Participaría en el <b>cuidado y mantenimiento</b> del sistema de agua?',
+    opts:[{e:'✅',t:'Sí, con gusto'},{e:'⚖️',t:'Depende de cómo'},{e:'❌',t:'No podría'}]},
+
+  {id:'concerns',type:'textarea',section:'Sección 7 — El proyecto',label:'Aportes o preocupaciones',
+    msg:'¿Algún <b>aporte, sugerencia o preocupación</b> para el proyecto?<br><em>Opcional</em>',
+    ph:'Escríbanos aquí...',req:false,skip:true},
+
+  {id:'final_message',type:'textarea',section:'Sección 7 — El proyecto',label:'Mensaje final',
+    msg:'¿Un <b>mensaje final</b> para el equipo del proyecto?<br><em>Opcional</em>',
+    ph:'Su mensaje para nosotros...',req:false,skip:true},
+
+  {id:'audio_final',type:'audio',section:'Sección 7 — El proyecto',label:'Audio final',
+    msg:'¿Le gustaría <b>grabar un mensaje de voz</b> final?<br><em>Opcional · máx. 2 min</em>'},
+
+  {id:'volunteer_name',type:'text',section:'Sección 7 — El proyecto',label:'Nombre del voluntario',
+    msg:'¿Cuál es el nombre del <b>voluntario</b> que aplica esta encuesta? (opcional)',
+    ph:'Nombre del voluntario...',req:false,skip:true},
+
+  {id:'_confirm',type:'submit',section:'',
+    msg:'✅ ¡Muchas gracias! Ya tengo todas sus respuestas.<br><br>¿Desea <b>enviar la encuesta</b> ahora?'}
+];
+
+// ── PROGRESS ─────────────────────────────────────────
+function updateProgress(){
+  var countable=Q.filter(function(q){return q.id.charAt(0)!=='_';});
+  var done=Object.keys(answers).length;
+  var pct=Math.min(Math.round(done/countable.length*100),100);
+  $('progFill').style.width=pct+'%';
+  $('pctLabel').textContent=pct+'%';
+  var cur=Q[qIdx];
+  $('stepLabel').textContent=cur&&cur.label?cur.label:'';
+  $('sectionTag').textContent=cur&&cur.section?cur.section:'';
+}
+
+// ── MESSAGES ─────────────────────────────────────────
+function addBot(html){
+  var msgs=$('msgs'), row=mk('div','row');
+  row.innerHTML='<div class="av av-bot">💧</div><div class="bbl bbl-bot">'+html+'</div>';
+  msgs.appendChild(row); scrollDown();
+}
+function addUser(txt){
+  var msgs=$('msgs'), row=mk('div','row me');
+  row.innerHTML='<div class="av av-me">Yo</div><div class="bbl bbl-me">'+txt+'</div>';
+  msgs.appendChild(row); scrollDown();
+}
+function showTyping(cb){
+  var msgs=$('msgs'), row=mk('div','typing-row'); row.id='typr';
+  row.innerHTML='<div class="av av-bot">💧</div><div class="typing-bbl"><span></span><span></span><span></span></div>';
+  msgs.appendChild(row); scrollDown();
+  setTimeout(function(){var t=$('typr');if(t)t.remove();cb();},550);
+}
+function clearIA(){$('ia').innerHTML='';}
+
+// ── NAVIGATION ───────────────────────────────────────
+function next(value,display){
+  var cur=Q[qIdx];
+  if(cur.id.charAt(0)!=='_'){answers[cur.id]=value;}
+  if(display){addUser(display);}
+  clearIA(); updateProgress(); qIdx++;
+  while(qIdx<Q.length&&Q[qIdx].showIf&&!Q[qIdx].showIf()){qIdx++;}
+  if(qIdx<Q.length){showTyping(function(){renderQ(Q[qIdx]);});}
+}
+
+// ── RENDER ───────────────────────────────────────────
+function renderQ(q){
+  addBot(q.msg);
+  var ia=$('ia');
+
+  if(q.type==='welcome'||q.type==='choices'){
+    var wrap=mk('div','choices');
+    q.opts.forEach(function(o){
+      var btn=mk('button','ch-btn');
+      btn.innerHTML='<span class="ch-emoji">'+o.e+'</span>'+o.t;
+      btn.onclick=function(){next(o.t,o.e+' '+o.t);};
+      wrap.appendChild(btn);
+    });
+    ia.appendChild(wrap);
+
+  }else if(q.type==='pills'){
+    var wrap=mk('div','pills');
+    q.opts.forEach(function(o){
+      var btn=mk('button','pill-btn');
+      btn.textContent=o.e+' '+o.t;
+      btn.onclick=function(){next(o.t,o.e+' '+o.t);};
+      wrap.appendChild(btn);
+    });
+    ia.appendChild(wrap);
+
+  }else if(q.type==='multi'){
+    var wrap=mk('div','multi-wrap');
+    var optDiv=mk('div','multi-opts');
+    var selected=[];
+    q.opts.forEach(function(o,i){
+      var item=mk('div','multi-item');
+      var cb=document.createElement('input');cb.type='checkbox';cb.id='mc'+i;
+      var lbl=mk('span','multi-label');lbl.textContent=o.t;
+      var emo=mk('span','multi-emoji');emo.textContent=o.e;
+      item.appendChild(cb);item.appendChild(emo);item.appendChild(lbl);
+      item.onclick=function(){
+        cb.checked=!cb.checked;
+        item.classList.toggle('selected',cb.checked);
+        if(cb.checked){selected.push(o.t);}
+        else{selected=selected.filter(function(s){return s!==o.t;});}
+      };
+      optDiv.appendChild(item);
+    });
+    var done=mk('button','multi-done');done.textContent='Confirmar selección →';
+    done.onclick=function(){
+      if(!selected.length){alert('Por favor seleccione al menos una opción');return;}
+      next(selected.join(', '),'✓ '+selected.join(', '));
+    };
+    wrap.appendChild(optDiv);wrap.appendChild(done);
+    ia.appendChild(wrap);
+
+  }else if(q.type==='text'){
+    var wrap=mk('div','txt-wrap');
+    var inp=document.createElement('input');
+    inp.type='text';inp.className='txt-single';inp.id='txt-inp';inp.placeholder=q.ph||'';
+    wrap.appendChild(inp);
+    var btns=mk('div','txt-btns');
+    if(q.skip){
+      var s=mk('button','skip-btn');s.textContent='Omitir';
+      s.onclick=function(){next('','(omitido)');};
+      btns.appendChild(s);
+    }
+    var send=mk('button','send-btn');send.textContent='Enviar →';
+    send.onclick=function(){
+      var v=inp.value.trim();
+      if(q.req&&!v){inp.style.borderColor='#C0392B';inp.focus();return;}
+      next(v||'',v||'(sin respuesta)');
+    };
+    inp.onkeydown=function(e){if(e.key==='Enter')send.click();};
+    btns.appendChild(send);wrap.appendChild(btns);
+    ia.appendChild(wrap);
+    setTimeout(function(){inp.focus();},300);
+
+  }else if(q.type==='textarea'){
+    var wrap=mk('div','txt-wrap');
+    var ta=document.createElement('textarea');
+    ta.className='txt-area';ta.id='txt-inp';ta.placeholder=q.ph||'';
+    wrap.appendChild(ta);
+    var btns=mk('div','txt-btns');
+    if(q.skip){
+      var s=mk('button','skip-btn');s.textContent='Omitir';
+      s.onclick=function(){next('','(omitido)');};
+      btns.appendChild(s);
+    }
+    var send=mk('button','send-btn');send.textContent='Enviar →';
+    send.onclick=function(){
+      var v=ta.value.trim();
+      if(q.req&&!v){ta.style.borderColor='#C0392B';ta.focus();return;}
+      next(v||'',v.length>60?v.slice(0,60)+'...':v||'(omitido)');
+    };
+    btns.appendChild(send);wrap.appendChild(btns);
+    ia.appendChild(wrap);
+
+  }else if(q.type==='number'){
+    var wrap=mk('div','num-wrap');
+    var curVal=q.def||0;
+    var minus=mk('button','num-ctrl');minus.textContent='−';
+    var disp=document.createElement('input');
+    disp.type='number';disp.className='num-val';disp.id='num-val';
+    disp.value=curVal;disp.min=q.min||0;disp.max=q.max||999;
+    var plus=mk('button','num-ctrl');plus.textContent='+';
+    var ok=mk('button','num-ok');ok.textContent='OK →';
+    minus.onclick=function(){disp.value=Math.max(q.min||0,parseInt(disp.value)-1);};
+    plus.onclick=function(){disp.value=Math.min(q.max||999,parseInt(disp.value)+1);};
+    ok.onclick=function(){var v=String(parseInt(disp.value)||0);next(v,v);};
+    wrap.appendChild(minus);wrap.appendChild(disp);wrap.appendChild(plus);wrap.appendChild(ok);
+    ia.appendChild(wrap);
+
+  }else if(q.type==='date'){
+    var today=new Date();
+    var yy=today.getFullYear(),mm=String(today.getMonth()+1).padStart(2,'0'),dd=String(today.getDate()).padStart(2,'0');
+    var todayISO=yy+'-'+mm+'-'+dd, todayFmt=mm+'/'+dd+'/'+yy;
+    var wrap=mk('div','date-wrap');
+    var inp=document.createElement('input');
+    inp.type='date';inp.className='date-inp';inp.id='date-inp';inp.value=todayISO;
+    wrap.appendChild(inp);
+    var btns=mk('div','date-btns');
+    var todayBtn=mk('button','date-today');todayBtn.textContent='📅 Usar hoy';
+    todayBtn.onclick=function(){next(todayFmt,'📅 '+todayFmt);};
+    var okBtn=mk('button','date-ok');okBtn.textContent='Confirmar →';
+    okBtn.onclick=function(){
+      var v=inp.value;
+      var fmt=v?inputToDate(v):todayFmt;
+      next(fmt,'📅 '+fmt);
+    };
+    btns.appendChild(todayBtn);btns.appendChild(okBtn);wrap.appendChild(btns);
+    ia.appendChild(wrap);
+
+  }else if(q.type==='audio'){
+    currentAudioField=q.id;
+    var wrap=mk('div','audio-wrap');
+    wrap.innerHTML='<div class="audio-box">'+
+      '<div class="audio-status" id="rec-status">Toque el micrófono para grabar</div>'+
+      '<div class="audio-ctrl">'+
+        '<button class="rec-btn rec-idle" id="rec-btn">🎙️</button>'+
+        '<div class="rec-timer" id="rec-timer">0:00</div>'+
+        '<button class="stop-btn" id="stop-btn" style="display:none">⏹</button>'+
+      '</div>'+
+      '<audio class="audio-player" id="audio-player" controls style="display:none"></audio>'+
+      '<div class="audio-hint">Máx. 2 minutos · opcional</div>'+
+      '<button class="audio-skip" id="audio-done-btn">Continuar →</button>'+
+    '</div>';
+    ia.appendChild(wrap);
+    $('rec-btn').onclick=toggleRec;
+    $('stop-btn').onclick=stopRec;
+    $('audio-done-btn').onclick=function(){
+      var label=audioB64?'🎙️ Audio grabado':'(sin audio)';
+      if(audioB64){audios[currentAudioField]=audioB64;audioB64=null;}
+      next('',label);
+    };
+
+  }else if(q.type==='submit'){
+    var wrap=mk('div','choices');
+    var yes=mk('button','ch-btn');
+    yes.innerHTML='<span class="ch-emoji">✅</span>Sí, enviar mis respuestas';
+    yes.onclick=submitSurvey;
+    var no=mk('button','ch-btn');
+    no.innerHTML='<span class="ch-emoji">🔄</span>Empezar de nuevo';
+    no.onclick=doRestart;
+    wrap.appendChild(yes);wrap.appendChild(no);
+    ia.appendChild(wrap);
+  }
+  scrollDown();
+}
+
+function mk(tag,cls){var el=document.createElement(tag);el.className=cls;return el;}
+
+// ── AUDIO ────────────────────────────────────────────
+function toggleRec(){
+  if(mediaRec&&mediaRec.state==='recording'){stopRec();return;}
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    var mime=MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4';
+    mediaRec=new MediaRecorder(stream,{mimeType:mime});
+    recChunks=[];recSecs=0;
+    mediaRec.ondataavailable=function(e){if(e.data.size>0)recChunks.push(e.data);};
+    mediaRec.onstop=processAudio;
+    mediaRec.start(200);
+    $('rec-btn').className='rec-btn rec-on';$('rec-btn').textContent='🔴';
+    $('stop-btn').style.display='flex';
+    $('rec-status').textContent='Grabando... toque ⏹ para detener';
+    $('rec-status').style.color='#C0392B';
+    $('rec-timer').className='rec-timer on';
+    recTmr=setInterval(function(){
+      recSecs++;
+      var m=Math.floor(recSecs/60),s=String(recSecs%60).padStart(2,'0');
+      $('rec-timer').textContent=m+':'+s;
+      if(recSecs>=120)stopRec();
+    },1000);
+  }).catch(function(){
+    $('rec-status').textContent='⚠️ Permita el acceso al micrófono';
+    $('rec-status').style.color='#C0392B';
+  });
+}
+
+function stopRec(){
+  if(mediaRec&&mediaRec.state!=='inactive'){
+    mediaRec.stop();mediaRec.stream.getTracks().forEach(function(t){t.stop();});
+  }
+  clearInterval(recTmr);
+  if($('rec-btn')){$('rec-btn').className='rec-btn rec-done';$('rec-btn').textContent='🎙️';}
+  if($('stop-btn')){$('stop-btn').style.display='none';}
+  if($('rec-timer')){$('rec-timer').className='rec-timer';}
+  if($('rec-status')){$('rec-status').textContent='✓ Audio listo';$('rec-status').style.color='#0F6E56';}
+  if($('audio-done-btn')){$('audio-done-btn').textContent='Guardar y continuar →';}
+}
+
+function processAudio(){
+  var blob=new Blob(recChunks,{type:mediaRec?mediaRec.mimeType:'audio/webm'});
+  var url=URL.createObjectURL(blob);
+  if($('audio-player')){$('audio-player').src=url;$('audio-player').style.display='block';}
+  var reader=new FileReader();
+  reader.onload=function(){audioB64=reader.result;};
+  reader.readAsDataURL(blob);
+}
+
+// ── SUBMIT ───────────────────────────────────────────
+async function submitSurvey(){
+  clearIA();
+  addUser('✅ Sí, enviar mis respuestas');
+  addBot('Enviando sus respuestas...');
+
+  var fields={
+    'Name'                                     : answers['nombre']||'',
+    'Household Representative Name'            : answers['nombre']||'',
+    'Age'                                      : answers['age']||'',
+    'Gender'                                   : answers['gender']||'',
+    'Community'                                : answers['community']||'',
+    'Family Number'                            : answers['family_number']||'',
+    'Household Size'                           : answers['household_size']||'',
+    'Survey Date'                              : answers['survey_date']||'',
+    'Surveyor Name'                            : answers['surveyor_name']||'',
+    'WhatsApp Number'                          : answers['whatsapp']||'',
+    'Water sources'                            : answers['water_sources']||'',
+    'Time to collect water (hours)'            : answers['time_hours']||'',
+    'Time to collect water (minutes)'          : answers['time_minutes']||'',
+    'Water collector'                          : answers['water_collector']||'',
+    'Number of trips per day'                  : answers['trips_per_day']||'',
+    'Containers per trip'                      : answers['containers_per_trip']||'',
+    'Container size (L)'                       : answers['container_size']||'',
+    'Water collection story'                   : answers['water_collection_story']||'',
+    'Water quality perception'                 : answers['water_quality']||'',
+    'Water treatment'                          : answers['water_treatment']||'',
+    'Other water treatment method'             : answers['other_treatment']||'',
+    'Family illness due to water (3 months)'   : answers['family_illness']||'',
+    'Ill person(s)'                            : answers['ill_person']||'',
+    'Illness frequency'                        : answers['illness_frequency']||'',
+    'Water storage method'                     : answers['water_storage']||'',
+    'Cleans water containers'                  : answers['cleans_containers']||'',
+    'Water-related challenge story'            : answers['water_challenge_story']||'',
+    'Hand washing frequency'                   : answers['handwashing_freq']||'',
+    'Soap or ash available for hand washing'   : answers['soap_available']||'',
+    'Sanitation facility'                      : answers['sanitation']||'',
+    'Waste disposal method'                    : answers['waste_disposal']||'',
+    'Other waste disposal method'              : answers['other_waste']||'',
+    'Hygiene/water customs story'              : answers['hygiene_story']||'',
+    'Impact of water collection on daily life' : answers['impact_daily_life']||'',
+    'Children miss school for water'           : answers['children_miss_school']||'',
+    'Weekly water expense'                     : answers['weekly_expense']||'',
+    'Seasonal water scarcity'                  : answers['seasonal_scarcity']||'',
+    'Life with clean water - hopes & changes'  : answers['hopes_clean_water']||'',
+    'Knows about water project'                : answers['knows_project']||'',
+    'Participated in project activities'       : answers['participated']||'',
+    'Willing to participate in water system care': answers['willing_to_participate']||'',
+    'Concerns or requests for project'         : answers['concerns']||'',
+    'Final message'                            : answers['final_message']||'',
+    'Volunteer Name'                           : answers['volunteer_name']||'',
+    'Timestamp'                                : nowTS()
+  };
+
+  if(audios['audio_water'])   fields['Water collection story']    += '\n[audio grabado]';
+  if(audios['audio_hygiene']) fields['Hygiene/water customs story']+= '\n[audio grabado]';
+  if(audios['audio_final'])   fields['Final message']             += '\n[audio grabado]';
+
+  // Remove empty fields
+  Object.keys(fields).forEach(function(k){if(!fields[k])delete fields[k];});
+
+  // Save locally
+  try{localStorage.setItem('agua_lb_'+Date.now(),JSON.stringify(fields));}catch(e){}
+
+  // Build WhatsApp message
+  var wa=buildWA(fields);
+  $('wa-btn').href='https://wa.me/?text='+encodeURIComponent(wa);
+  $('copy-btn').onclick=function(){copyText(wa);};
+
+  // Send to Google Sheet
+  var sent=false;
+  try{
+    await fetch(SHEET_URL,{
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(fields)
+    });
+    sent=true;
+  }catch(e){console.warn('Sheet error:',e);}
+
+
+
+  var badge=$('sucBadge');
+  badge.textContent=sent?'✓ Enviado a Google Sheets':'✓ Guardado en este dispositivo';
+  badge.className='suc-badge '+(sent?'badge-ok':'badge-local');
+  $('successScreen').classList.add('on');
+}
+
+// ── WHATSAPP ─────────────────────────────────────────
+function buildWA(f){
+  var lines=[
+    '━━━━━━━━━━━━━━━━━━━━━━━━',
+    '💧 ENCUESTA AGUA — LÍNEA BASE',
+    'GG#2681765 · '+(f['Timestamp']||''),
+    '━━━━━━━━━━━━━━━━━━━━━━━━',
+    '',
+    '👤 '+(f['Name']||'—'),
+    '🏘️ '+(f['Community']||'—')+' · '+(f['Age']||'—')+' años · '+(f['Gender']||'—'),
+    'N° familia: '+(f['Family Number']||'—')+' · Hogar: '+(f['Household Size']||'—')+' personas',
+    'WhatsApp: '+(f['WhatsApp Number']||'—'),
+    '',
+    '🚰 Fuente de agua: '+(f['Water sources']||'—'),
+    '⏱️ Tiempo busqueda: '+(f['Time to collect water (hours)']||'0')+'h '+(f['Time to collect water (minutes)']||'0')+'min',
+    '👤 Quién busca: '+(f['Water collector']||'—'),
+    '🔁 Viajes/día: '+(f['Number of trips per day']||'—'),
+    '',
+    '💧 Calidad: '+(f['Water quality perception']||'—'),
+    '🔬 Tratamiento: '+(f['Water treatment']||'—'),
+    '😷 Enfermedades (3m): '+(f['Family illness due to water (3 months)']||'—'),
+    '',
+    '🪣 Almacena en: '+(f['Water storage method']||'—'),
+    '🧼 Lavado manos: '+(f['Hand washing frequency']||'—'),
+    '🚽 Saneamiento: '+(f['Sanitation facility']||'—'),
+    '',
+    '📋 Impacto: '+(f['Impact of water collection on daily life']||'—'),
+    '👧 Niños/escuela: '+(f['Children miss school for water']||'—'),
+    '💰 Gasto/semana: Bs.'+(f['Weekly water expense']||'0'),
+    '',
+    '🚰 Conoce proyecto: '+(f['Knows about water project']||'—'),
+    '✅ Participaría: '+(f['Willing to participate in water system care']||'—'),
+    '',
+    '📝 '+(f['Concerns or requests for project']||'Sin comentarios adicionales'),
+    '━━━━━━━━━━━━━━━━━━━━━━━━'
+  ];
+  return lines.join('\n');
+}
+
+function copyText(text){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){alert('✓ Respuestas copiadas');});
+  }else{
+    var ta=document.createElement('textarea');ta.value=text;
+    ta.style.cssText='position:fixed;top:10px;left:10px;right:10px;bottom:10px;z-index:9999;font-size:12px;padding:12px;border-radius:12px';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);alert('✓ Copiado');
+  }
+}
+
+// ── RESTART ──────────────────────────────────────────
+function doRestart(){
+  answers={};qIdx=0;audioB64=null;audios={};currentAudioField=null;
+  if(mediaRec&&mediaRec.state!=='inactive'){
+    try{mediaRec.stop();mediaRec.stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
+  }
+  clearInterval(recTmr);mediaRec=null;recChunks=[];recSecs=0;
+  $('msgs').innerHTML='';$('ia').innerHTML='';
+  $('successScreen').classList.remove('on');
+  updateProgress();renderQ(Q[0]);
+}
+
+// ── START ────────────────────────────────────────────
+window.addEventListener('load',function(){renderQ(Q[0]);updateProgress();});
+</script>
+</body>
+</html>
