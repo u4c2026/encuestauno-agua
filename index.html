@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#185FA5">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>💧 Agua Potable — Línea Base GG#2681765</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -156,6 +157,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#EEF0EC;color:#
 .badge-local{background:#FDF3DC;color:#BA7517}
 .restart-btn{margin-top:20px;padding:13px 28px;background:#185FA5;color:#fff;border:none;border-radius:11px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer}
 </style>
+</style>
 </head>
 <body>
 
@@ -227,10 +229,12 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#EEF0EC;color:#
 
 <script>
 // ── CREDENTIALS ──────────────────────────────────────
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxo-R8d7MTshNCWIBDD-Kyq7Viw7nBskX22TN_E6YYJV_Qk-w3bj2-AOfQNMrU3T9l3/exec';
-const AT_KEY    = 'patsOzg9xVtc7eVmV.8f2a666275a984540ff3b3889552f61e45871f3d7d765e720c569ad10066942c';
-const AT_BASE   = 'appDUtzC5rbGgnOHb';
-const AT_TABLE  = 'tblX6ZmGqpGC66Y6J';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzUlOfmLlcHRC9cJcBrQU7e32jH0YHD-O7lyP5ochjpI9EZPt5Q99T6Vsx37TJ0yNBR/exec';
+const FORM_URL  = 'https://docs.google.com/forms/d/e/1FAIpQLSc5zXEtIctu1VIcZQb6kaTyupWNriaOhwVkkhWB_ajYj-ihjw/formResponse';
+const ENTRY_ID  = 'entry.1088115718';
+
+
+
 
 // ── HELPERS ──────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
@@ -748,29 +752,95 @@ async function submitSurvey(){
   $('wa-btn').href='https://wa.me/?text='+encodeURIComponent(wa);
   $('copy-btn').onclick=function(){copyText(wa);};
 
-  // Send to Google Sheet
+  // Send to Google Form (100% reliable, no CORS issues)
   var sent=false;
   try{
-    await fetch(SHEET_URL,{
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(fields)
-    });
-    sent=true;
-  }catch(e){console.warn('Sheet error:',e);}
+    // Build a readable text summary for the single form field
+    var summary = [
+      '=== ENCUESTA AGUA - LÍNEA BASE ===',
+      'Fecha/Hora: ' + (fields['Timestamp']||''),
+      '',
+      'DATOS PERSONALES',
+      'Nombre: '          + (fields['Name']||''),
+      'Edad: '            + (fields['Age']||''),
+      'Género: '          + (fields['Gender']||''),
+      'Comunidad: '       + (fields['Community']||''),
+      'N° familia: '      + (fields['Family Number']||''),
+      'Personas hogar: '  + (fields['Household Size']||''),
+      'Fecha encuesta: '  + (fields['Survey Date']||''),
+      'Encuestador: '     + (fields['Surveyor Name']||''),
+      'WhatsApp: '        + (fields['WhatsApp Number']||''),
+      '',
+      'FUENTES DE AGUA',
+      'Fuente: '          + (fields['Water sources']||''),
+      'Tiempo (h): '      + (fields['Time to collect water (hours)']||''),
+      'Tiempo (min): '    + (fields['Time to collect water (minutes)']||''),
+      'Quién busca: '     + (fields['Water collector']||''),
+      'Viajes/día: '      + (fields['Number of trips per day']||''),
+      'Recipientes: '     + (fields['Containers per trip']||''),
+      'Capacidad (L): '   + (fields['Container size (L)']||''),
+      'Historia: '        + (fields['Water collection story']||''),
+      '',
+      'CALIDAD DEL AGUA',
+      'Percepción: '      + (fields['Water quality perception']||''),
+      'Tratamiento: '     + (fields['Water treatment']||''),
+      'Otro método: '     + (fields['Other water treatment method']||''),
+      'Enfermedades(3m): '+ (fields['Family illness due to water (3 months)']||''),
+      'Quién enfermó: '   + (fields['Ill person(s)']||''),
+      'Frecuencia: '      + (fields['Illness frequency']||''),
+      '',
+      'ALMACENAMIENTO',
+      'Guarda agua en: '  + (fields['Water storage method']||''),
+      'Lava recipientes: '+ (fields['Cleans water containers']||''),
+      'Dificultad: '      + (fields['Water-related challenge story']||''),
+      '',
+      'HIGIENE',
+      'Lavado manos: '    + (fields['Hand washing frequency']||''),
+      'Jabón/ceniza: '    + (fields['Soap or ash available for hand washing']||''),
+      'Saneamiento: '     + (fields['Sanitation facility']||''),
+      'Desechos: '        + (fields['Waste disposal method']||''),
+      'Otro desecho: '    + (fields['Other waste disposal method']||''),
+      'Costumbres: '      + (fields['Hygiene/water customs story']||''),
+      '',
+      'IMPACTO',
+      'Impacto diario: '  + (fields['Impact of water collection on daily life']||''),
+      'Niños/escuela: '   + (fields['Children miss school for water']||''),
+      'Gasto semanal: Bs.'+ (fields['Weekly water expense']||''),
+      'Escasez: '         + (fields['Seasonal water scarcity']||''),
+      'Esperanzas: '      + (fields['Life with clean water - hopes & changes']||''),
+      '',
+      'PROYECTO',
+      'Conoce proyecto: ' + (fields['Knows about water project']||''),
+      'Participó: '       + (fields['Participated in project activities']||''),
+      'Participaría: '    + (fields['Willing to participate in water system care']||''),
+      'Aportes: '         + (fields['Concerns or requests for project']||''),
+      'Mensaje: '         + (fields['Final message']||''),
+      'Voluntario: '      + (fields['Volunteer Name']||''),
+    ].join('\n');
 
-  // Also try Airtable
-  try{
-    await fetch('https://api.airtable.com/v0/'+AT_BASE+'/'+AT_TABLE,{
-      method:'POST',
-      headers:{'Authorization':'Bearer '+AT_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({fields:fields})
+    var formData = new FormData();
+    formData.append(ENTRY_ID, summary);
+
+    await fetch(FORM_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
     });
-  }catch(e){}
+    sent = true;
+  } catch(e){ console.warn('Form error:',e); }
+
+  
 
   var badge=$('sucBadge');
-  badge.textContent=sent?'✓ Enviado a Google Sheets':'✓ Guardado en este dispositivo';
-  badge.className='suc-badge '+(sent?'badge-ok':'badge-local');
+  if(sent){
+    badge.textContent='✓ Datos enviados a Google Sheets';
+    badge.className='suc-badge badge-ok';
+    badge.style.cssText='background:#E8F5EE;color:#0F6E56;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:700;margin-top:14px;display:block';
+  } else {
+    badge.textContent='⚠️ Sin conexión — use el botón de WhatsApp para guardar sus respuestas';
+    badge.className='suc-badge badge-local';
+    badge.style.cssText='background:#FDF3DC;color:#BA7517;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;margin-top:14px;display:block';
+  }
   $('successScreen').classList.add('on');
 }
 
