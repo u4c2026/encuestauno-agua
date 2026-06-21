@@ -199,31 +199,24 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#EEF0EC;color:#
 <div class="success" id="successScreen">
   <div class="suc-ico">💧</div>
   <h2>¡Encuesta completa!</h2>
-  <p>Gracias por participar. Sus respuestas se envían automáticamente. También puede compartirlas por WhatsApp.</p>
-  <p class="suc-note">GG#2681765 · Línea Base · Rotary · U4C · QBL</p>
-  <div class="suc-badge" id="sucBadge">Enviando...</div>
+  <p style="font-size:16px;font-weight:900;color:#185FA5;margin-bottom:8px">📱 Envíe sus respuestas por WhatsApp ahora</p>
+  <p style="font-size:14px;color:#4A5248;line-height:1.5;max-width:280px">Toque el botón verde para enviar todas sus respuestas al grupo del proyecto GG#2681765.</p>
+  <p class="suc-note" style="margin-top:8px">Rotary · U4C · QBL</p>
 
   <a id="wa-btn" href="#" target="_blank"
-    style="display:flex;align-items:center;justify-content:center;gap:10px;
-           width:100%;max-width:300px;margin-top:20px;padding:15px 20px;
-           background:#25D366;color:#fff;border-radius:12px;
-           font-family:Nunito,sans-serif;font-size:16px;font-weight:800;
-           text-decoration:none">
-    <span style="font-size:22px">💬</span> Enviar por WhatsApp
+    style="display:flex;align-items:center;justify-content:center;gap:12px;
+           width:100%;max-width:300px;margin-top:22px;padding:18px 20px;
+           background:#25D366;color:#fff;border-radius:14px;
+           font-family:Nunito,sans-serif;font-size:18px;font-weight:900;
+           text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.45)">
+    <span style="font-size:26px">💬</span> Enviar por WhatsApp
   </a>
 
-  <button id="copy-btn"
-    style="width:100%;max-width:300px;margin-top:10px;padding:13px;
-           background:#fff;color:#185FA5;border:2px solid #185FA5;border-radius:12px;
-           font-family:Nunito,sans-serif;font-size:15px;font-weight:800;cursor:pointer">
-    📋 Copiar respuestas
-  </button>
-
   <button onclick="doRestart()"
-    style="width:100%;max-width:300px;margin-top:10px;padding:12px;
+    style="width:100%;max-width:300px;margin-top:12px;padding:13px;
            background:#EEF0EC;color:#4A5248;border:none;border-radius:12px;
            font-family:Nunito,sans-serif;font-size:14px;font-weight:700;cursor:pointer">
-    🔄 Llenar de nuevo
+    🔄 Llenar otra encuesta
   </button>
 </div>
 
@@ -251,7 +244,7 @@ var mediaRec=null, recChunks=[], recSecs=0, recTmr=null, qrGenerated=false;
 // ── QUESTIONS ────────────────────────────────────────
 var Q=[
   {id:'bienvenida',type:'welcome',section:'',
-    msg:'¡Hola! 👋 Le voy a hacer algunas preguntas sobre el <b>acceso al agua</b> en su hogar.<br><br>Esto es parte de la encuesta de <b>Línea Base</b> del proyecto de agua potable GG#2681765.<br><br>Sus respuestas son <b>completamente confidenciales</b>.<br><br>¿Está listo/a?',
+    msg:'<b style="color:#185FA5;font-size:15px">📱 Al finalizar, envíe sus respuestas por WhatsApp</b><br><br>¡Hola! 👋 Le voy a hacer algunas preguntas sobre el <b>acceso al agua</b> en su hogar.<br><br>Esto es parte de la encuesta de <b>Línea Base</b> del proyecto de agua potable GG#2681765.<br><br>Sus respuestas son <b>completamente confidenciales</b>.<br><br>¿Está listo/a?',
     opts:[{e:'✅',t:'Sí, comenzar'},{e:'⏳',t:'En un momento'}]},
 
   {id:'nombre',type:'text',section:'Sección 1 — Datos personales',label:'Nombre',
@@ -749,8 +742,9 @@ async function submitSurvey(){
 
   // Build WhatsApp message
   var wa=buildWA(fields);
-  $('wa-btn').href='https://wa.me/?text='+encodeURIComponent(wa);
-  $('copy-btn').onclick=function(){copyText(wa);};
+  // Send to WhatsApp group
+  var waText = encodeURIComponent(wa);
+  $('wa-btn').href = 'https://wa.me/5756029376?text=' + waText;
 
   // Send to Google Form (100% reliable, no CORS issues)
   var sent=false;
@@ -842,6 +836,11 @@ async function submitSurvey(){
     badge.style.cssText='background:#FDF3DC;color:#BA7517;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;margin-top:14px;display:block';
   }
   $('successScreen').classList.add('on');
+  // Auto-open WhatsApp after 1 second
+  setTimeout(function(){
+    var btn = $('wa-btn');
+    if(btn && btn.href && btn.href !== '#') btn.click();
+  }, 1200);
 }
 
 // ── WHATSAPP ─────────────────────────────────────────
