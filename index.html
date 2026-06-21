@@ -642,7 +642,10 @@ async function submitSurvey(){
   var waUrl = 'https://wa.me/18329684349?text=' + encodeURIComponent(wa);
   $('wa-btn').href = waUrl;
 
-  // Show success immediately — no waiting for network
+  // Open WhatsApp immediately — this is triggered by user tap so browser allows it
+  window.open('https://wa.me/18329684349?text=' + encodeURIComponent(wa), '_blank');
+
+  // Show success screen
   $('successScreen').classList.add('on');
 
   // Send to Airtable silently in background
