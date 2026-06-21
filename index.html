@@ -118,21 +118,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#EEF0EC;color:#
 .date-today{flex:1;padding:12px;background:#EAF3FB;color:#185FA5;border:1.5px solid #185FA5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer}
 .date-ok{flex:1;padding:12px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer}
 
-/* AUDIO */
-.audio-wrap{padding:5px 12px 9px}
-.audio-box{background:#EEF0EC;border:1.5px solid #E2E5DF;border-radius:12px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:9px}
-.audio-status{font-size:12px;color:#8A9188;font-weight:700;text-align:center}
-.audio-ctrl{display:flex;align-items:center;gap:13px}
-.rec-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;font-size:23px;display:flex;align-items:center;justify-content:center;transition:transform .1s}
-.rec-btn:active{transform:scale(.93)}
-.rec-idle{background:#C0392B}.rec-on{background:#C0392B;animation:pulse 1s infinite}.rec-done{background:#0F6E56}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.5)}70%{box-shadow:0 0 0 12px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
-.stop-btn{width:42px;height:42px;border-radius:9px;border:1.5px solid #E2E5DF;background:#fff;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.rec-timer{font-size:21px;font-weight:800;color:#1A1F18;min-width:50px;text-align:center;font-variant-numeric:tabular-nums}
-.rec-timer.on{color:#C0392B}
-.audio-player{width:100%;border-radius:9px;outline:none}
-.audio-hint{font-size:11px;color:#8A9188;text-align:center}
-.audio-skip{padding:9px 17px;border:1.5px solid #E2E5DF;border-radius:9px;background:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:#4A5248;cursor:pointer}
+/* AUDIO */70%{box-shadow:0 0 0 12px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
 
 /* QR */
 .qr-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;align-items:center;justify-content:center;padding:20px}
@@ -303,9 +289,6 @@ var Q=[
     msg:'En sus palabras, ¿cómo es un día <b>buscando agua</b> para su familia?<br><em>Opcional</em>',
     ph:'Cuéntenos...',req:false,skip:true},
 
-  {id:'audio_water',type:'audio',section:'Sección 2 — Fuentes de agua',label:'Audio — agua',
-    msg:'¿Le gustaría <b>grabar un audio</b> sobre cómo obtiene el agua?<br><em>Opcional · máx. 2 min</em>'},
-
   {id:'water_quality',type:'choices',section:'Sección 3 — Calidad del agua',label:'Calidad del agua',
     msg:'¿Cómo considera el <b>agua que usa actualmente</b>?',
     opts:[{e:'✨',t:'Limpia y segura'},{e:'🤔',t:'Más o menos limpia'},{e:'⚠️',t:'Sucia o contaminada'},{e:'❓',t:'No sé si es segura'}]},
@@ -367,9 +350,6 @@ var Q=[
     msg:'¿Costumbres o tradiciones de higiene en su familia?<br><em>Opcional</em>',
     ph:'Cuéntenos...',req:false,skip:true},
 
-  {id:'audio_hygiene',type:'audio',section:'Sección 5 — Higiene',label:'Audio — higiene',
-    msg:'¿Le gustaría <b>grabar un audio</b> sobre sus costumbres de higiene?<br><em>Opcional · máx. 2 min</em>'},
-
   {id:'impact_daily_life',type:'choices',section:'Sección 6 — Impacto',label:'Impacto en vida diaria',
     msg:'¿El tiempo para buscar agua <b>afecta</b> las actividades diarias?',
     opts:[{e:'😓',t:'Sí, afecta mucho'},{e:'⚖️',t:'Sí, afecta algo'},{e:'👍',t:'Casi no afecta'},{e:'✅',t:'No afecta nada'}]},
@@ -408,9 +388,6 @@ var Q=[
   {id:'final_message',type:'textarea',section:'Sección 7 — El proyecto',label:'Mensaje final',
     msg:'¿Un <b>mensaje final</b> para el equipo del proyecto?<br><em>Opcional</em>',
     ph:'Su mensaje para nosotros...',req:false,skip:true},
-
-  {id:'audio_final',type:'audio',section:'Sección 7 — El proyecto',label:'Audio final',
-    msg:'¿Le gustaría <b>grabar un mensaje de voz</b> final?<br><em>Opcional · máx. 2 min</em>'},
 
   {id:'volunteer_name',type:'text',section:'Sección 7 — El proyecto',label:'Nombre del voluntario',
     msg:'¿Cuál es el nombre del <b>voluntario</b> que aplica esta encuesta? (opcional)',
@@ -589,29 +566,6 @@ function renderQ(q){
     btns.appendChild(todayBtn);btns.appendChild(okBtn);wrap.appendChild(btns);
     ia.appendChild(wrap);
 
-  }else if(q.type==='audio'){
-    currentAudioField=q.id;
-    var wrap=mk('div','audio-wrap');
-    wrap.innerHTML='<div class="audio-box">'+
-      '<div class="audio-status" id="rec-status">Toque el micrófono para grabar</div>'+
-      '<div class="audio-ctrl">'+
-        '<button class="rec-btn rec-idle" id="rec-btn">🎙️</button>'+
-        '<div class="rec-timer" id="rec-timer">0:00</div>'+
-        '<button class="stop-btn" id="stop-btn" style="display:none">⏹</button>'+
-      '</div>'+
-      '<audio class="audio-player" id="audio-player" controls style="display:none"></audio>'+
-      '<div class="audio-hint">Máx. 2 minutos · opcional</div>'+
-      '<button class="audio-skip" id="audio-done-btn">Continuar →</button>'+
-    '</div>';
-    ia.appendChild(wrap);
-    $('rec-btn').onclick=toggleRec;
-    $('stop-btn').onclick=stopRec;
-    $('audio-done-btn').onclick=function(){
-      var label=audioB64?'🎙️ Audio grabado':'(sin audio)';
-      if(audioB64){audios[currentAudioField]=audioB64;audioB64=null;}
-      next('',label);
-    };
-
   }else if(q.type==='submit'){
     var wrap=mk('div','choices');
     var yes=mk('button','ch-btn');
@@ -627,54 +581,6 @@ function renderQ(q){
 }
 
 function mk(tag,cls){var el=document.createElement(tag);el.className=cls;return el;}
-
-// ── AUDIO ────────────────────────────────────────────
-function toggleRec(){
-  if(mediaRec&&mediaRec.state==='recording'){stopRec();return;}
-  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
-    var mime=MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4';
-    mediaRec=new MediaRecorder(stream,{mimeType:mime});
-    recChunks=[];recSecs=0;
-    mediaRec.ondataavailable=function(e){if(e.data.size>0)recChunks.push(e.data);};
-    mediaRec.onstop=processAudio;
-    mediaRec.start(200);
-    $('rec-btn').className='rec-btn rec-on';$('rec-btn').textContent='🔴';
-    $('stop-btn').style.display='flex';
-    $('rec-status').textContent='Grabando... toque ⏹ para detener';
-    $('rec-status').style.color='#C0392B';
-    $('rec-timer').className='rec-timer on';
-    recTmr=setInterval(function(){
-      recSecs++;
-      var m=Math.floor(recSecs/60),s=String(recSecs%60).padStart(2,'0');
-      $('rec-timer').textContent=m+':'+s;
-      if(recSecs>=120)stopRec();
-    },1000);
-  }).catch(function(){
-    $('rec-status').textContent='⚠️ Permita el acceso al micrófono';
-    $('rec-status').style.color='#C0392B';
-  });
-}
-
-function stopRec(){
-  if(mediaRec&&mediaRec.state!=='inactive'){
-    mediaRec.stop();mediaRec.stream.getTracks().forEach(function(t){t.stop();});
-  }
-  clearInterval(recTmr);
-  if($('rec-btn')){$('rec-btn').className='rec-btn rec-done';$('rec-btn').textContent='🎙️';}
-  if($('stop-btn')){$('stop-btn').style.display='none';}
-  if($('rec-timer')){$('rec-timer').className='rec-timer';}
-  if($('rec-status')){$('rec-status').textContent='✓ Audio listo';$('rec-status').style.color='#0F6E56';}
-  if($('audio-done-btn')){$('audio-done-btn').textContent='Guardar y continuar →';}
-}
-
-function processAudio(){
-  var blob=new Blob(recChunks,{type:mediaRec?mediaRec.mimeType:'audio/webm'});
-  var url=URL.createObjectURL(blob);
-  if($('audio-player')){$('audio-player').src=url;$('audio-player').style.display='block';}
-  var reader=new FileReader();
-  reader.onload=function(){audioB64=reader.result;};
-  reader.readAsDataURL(blob);
-}
 
 // ── SUBMIT ───────────────────────────────────────────
 async function submitSurvey(){
@@ -733,13 +639,79 @@ async function submitSurvey(){
 
   // Build WhatsApp message
   var wa = buildWA(fields);
-  var waUrl = 'https://wa.me/15756029376?text=' + encodeURIComponent(wa);
+  var waUrl = 'https://wa.me/18329684349?text=' + encodeURIComponent(wa);
   $('wa-btn').href = waUrl;
 
   // Show success immediately — no waiting for network
   $('successScreen').classList.add('on');
 
-  // Try sending to sheet silently in background (don't block or wait)
+  // Send to Airtable silently in background
+  try{
+    var atFields = {
+      'Name'                                      : fields['Name']||'',
+      'Household Representative Name'             : fields['Name']||'',
+      'Age'                                       : fields['Age'] ? parseInt(fields['Age']) : null,
+      'Gender'                                    : fields['Gender']||'',
+      'Community'                                 : fields['Community']||'',
+      'Family Number'                             : fields['Family Number']||'',
+      'Household Size'                            : fields['Household Size'] ? parseInt(fields['Household Size']) : null,
+      'Survey Date'                               : fields['Survey Date']||'',
+      'Surveyor Name'                             : fields['Surveyor Name']||'',
+      'WhatsApp Number'                           : fields['WhatsApp Number']||'',
+      'Water sources'                             : fields['Water sources']||'',
+      'Time to collect water (hours)'             : fields['Time to collect water (hours)'] ? parseInt(fields['Time to collect water (hours)']) : null,
+      'Time to collect water (minutes)'           : fields['Time to collect water (minutes)'] ? parseInt(fields['Time to collect water (minutes)']) : null,
+      'Water collector'                           : fields['Water collector']||'',
+      'Number of trips per day'                   : fields['Number of trips per day'] ? parseInt(fields['Number of trips per day']) : null,
+      'Containers per trip'                       : fields['Containers per trip'] ? parseInt(fields['Containers per trip']) : null,
+      'Container size (L)'                        : fields['Container size (L)'] ? parseInt(fields['Container size (L)']) : null,
+      'Water collection story'                    : fields['Water collection story']||'',
+      'Water quality perception'                  : fields['Water quality perception']||'',
+      'Water treatment'                           : fields['Water treatment']||'',
+      'Other water treatment method'              : fields['Other water treatment method']||'',
+      'Family illness due to water (3 months)'    : fields['Family illness due to water (3 months)']||'',
+      'Ill person(s)'                             : fields['Ill person(s)']||'',
+      'Illness frequency'                         : fields['Illness frequency'] ? parseInt(fields['Illness frequency']) : null,
+      'Water storage method'                      : fields['Water storage method']||'',
+      'Cleans water containers'                   : fields['Cleans water containers']||'',
+      'Water-related challenge story'             : fields['Water-related challenge story']||'',
+      'Hand washing frequency'                    : fields['Hand washing frequency']||'',
+      'Soap or ash available for hand washing'    : fields['Soap or ash available for hand washing']||'',
+      'Sanitation facility'                       : fields['Sanitation facility']||'',
+      'Waste disposal method'                     : fields['Waste disposal method']||'',
+      'Other waste disposal method'               : fields['Other waste disposal method']||'',
+      'Hygiene/water customs story'               : fields['Hygiene/water customs story']||'',
+      'Impact of water collection on daily life'  : fields['Impact of water collection on daily life']||'',
+      'Children miss school for water'            : fields['Children miss school for water']||'',
+      'Weekly water expense'                      : fields['Weekly water expense'] ? parseInt(fields['Weekly water expense']) : null,
+      'Seasonal water scarcity'                   : fields['Seasonal water scarcity']||'',
+      'Life with clean water - hopes & changes'   : fields['Life with clean water - hopes & changes']||'',
+      'Knows about water project'                 : fields['Knows about water project']||'',
+      'Participated in project activities'        : fields['Participated in project activities']||'',
+      'Willing to participate in water system care': fields['Willing to participate in water system care']||'',
+      'Concerns or requests for project'          : fields['Concerns or requests for project']||'',
+      'Final message'                             : fields['Final message']||'',
+      'Volunteer Name'                            : fields['Volunteer Name']||'',
+      'Timestamp'                                 : fields['Timestamp']||''
+    };
+    // Remove null/empty fields
+    Object.keys(atFields).forEach(function(k){
+      if(atFields[k]===null||atFields[k]==='')delete atFields[k];
+    });
+    fetch('https://api.airtable.com/v0/appDUtzC5rbGgnOHb/tblX6ZmGqpGC66Y6J',{
+      method:'POST',
+      headers:{
+        'Authorization':'Bearer patsOzg9xVtc7eVmV.8f2a666275a984540ff3b3889552f61e45871f3d7d765e720c569ad10066942c',
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({fields:atFields})
+    }).then(function(r){return r.json();}).then(function(d){
+      if(d.id) console.log('✓ Airtable record created:',d.id);
+      else console.warn('Airtable error:',JSON.stringify(d));
+    }).catch(function(e){console.warn('Airtable fetch error:',e);});
+  }catch(e){console.warn('Airtable error:',e);}
+
+  // Try Google Sheet silently in background
   try{
     var img = new Image();
     var params = Object.keys(fields).map(function(k){
