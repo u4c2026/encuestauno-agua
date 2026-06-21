@@ -156,17 +156,6 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#EEF0EC;color:#
 .badge-local{background:#FDF3DC;color:#BA7517}
 .restart-btn{margin-top:20px;padding:13px 28px;background:#185FA5;color:#fff;border:none;border-radius:11px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer}
 </style>
-
-/* Hide host-html branding */
-iframe[src*="host-html"],
-a[href*="host-html"],
-div[class*="powered"],
-div[class*="branding"],
-div[id*="branding"],
-div[id*="powered"],
-[data-host-html],
-.host-html-badge,
-#host-html-badge { display:none !important; height:0 !important; }
 </style>
 </head>
 <body>
@@ -240,9 +229,9 @@ div[id*="powered"],
 <script>
 // ── CREDENTIALS ──────────────────────────────────────
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxo-R8d7MTshNCWIBDD-Kyq7Viw7nBskX22TN_E6YYJV_Qk-w3bj2-AOfQNMrU3T9l3/exec';
-
-
-
+const AT_KEY    = 'patsOzg9xVtc7eVmV.8f2a666275a984540ff3b3889552f61e45871f3d7d765e720c569ad10066942c';
+const AT_BASE   = 'appDUtzC5rbGgnOHb';
+const AT_TABLE  = 'tblX6ZmGqpGC66Y6J';
 
 // ── HELPERS ──────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
@@ -760,22 +749,54 @@ async function submitSurvey(){
   $('wa-btn').href='https://wa.me/?text='+encodeURIComponent(wa);
   $('copy-btn').onclick=function(){copyText(wa);};
 
-  // Send to Google Sheet
+  // Send to Google Sheet using form submission (most reliable method)
   var sent=false;
   try{
-    await fetch(SHEET_URL,{
+    // Method 1: fetch with no-cors
+    var fc = fetch(SHEET_URL, {
       method:'POST', mode:'no-cors',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(fields)
     });
+    // Method 2: also send via hidden form (fallback)
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = SHEET_URL;
+    form.target = 'hidden-iframe';
+    var inp = document.createElement('input');
+    inp.type = 'hidden';
+    inp.name = 'data';
+    inp.value = JSON.stringify(fields);
+    form.appendChild(inp);
+    var iframe = document.createElement('iframe');
+    iframe.name = 'hidden-iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    document.body.appendChild(form);
+    await fc;
+    form.submit();
     sent=true;
   }catch(e){console.warn('Sheet error:',e);}
 
-
+  // Also try Airtable
+  try{
+    await fetch('https://api.airtable.com/v0/'+AT_BASE+'/'+AT_TABLE,{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+AT_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({fields:fields})
+    });
+  }catch(e){}
 
   var badge=$('sucBadge');
-  badge.textContent=sent?'✓ Enviado a Google Sheets':'✓ Guardado en este dispositivo';
-  badge.className='suc-badge '+(sent?'badge-ok':'badge-local');
+  if(sent){
+    badge.textContent='✓ Datos enviados a Google Sheets';
+    badge.className='suc-badge badge-ok';
+    badge.style.cssText='background:#E8F5EE;color:#0F6E56;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:700;margin-top:14px;display:block';
+  } else {
+    badge.textContent='⚠️ Sin conexión — use el botón de WhatsApp para guardar sus respuestas';
+    badge.className='suc-badge badge-local';
+    badge.style.cssText='background:#FDF3DC;color:#BA7517;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;margin-top:14px;display:block';
+  }
   $('successScreen').classList.add('on');
 }
 
